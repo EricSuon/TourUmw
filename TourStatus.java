@@ -19,6 +19,9 @@ public class TourStatus {
     private Campus campus;
     private Location currentLocation;
     private final ArrayList<Item> backpack = new ArrayList<>();
+    // Pending weather event (scheduled but not yet active)
+    private Weather pendingWeather;
+    private int pendingWeatherTurns;
 
     private TourStatus() { }
 
@@ -111,6 +114,47 @@ public class TourStatus {
             backpack.add(found);
         }
         return found;
+    }
+
+    /**
+     * Schedules a pending weather event to occur after a number of turns.
+     * @param w weather event
+     * @param turns number of turns before the event occurs (must be >=1)
+     */
+    public void setPendingWeather(Weather w, int turns) {
+        if (w == null || turns < 1) return;
+        this.pendingWeather = w;
+        this.pendingWeatherTurns = turns;
+    }
+
+    /**
+     * Returns true when a weather event is pending.
+     */
+    public boolean hasPendingWeather() { return pendingWeather != null; }
+
+    /**
+     * Decrements the pending-weather turn counter by 1 and returns the remaining turns.
+     * If no pending weather, returns -1.
+     */
+    public int decrementPendingWeather() {
+        if (pendingWeather == null) return -1;
+        pendingWeatherTurns--;
+        return pendingWeatherTurns;
+    }
+
+    /**
+     * Returns the pending Weather instance without consuming it.
+     */
+    public Weather getPendingWeather() { return pendingWeather; }
+
+    /**
+     * Clears and returns the pending weather when it triggers.
+     */
+    public Weather consumePendingWeather() {
+        Weather w = pendingWeather;
+        pendingWeather = null;
+        pendingWeatherTurns = 0;
+        return w;
     }
 
     /**

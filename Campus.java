@@ -91,7 +91,18 @@ public class Campus {
             // name = first line, description = remainder joined with newlines
             String name = nb.get(0).trim();
             String desc = join(nb.subList(1, nb.size()), System.lineSeparator()).trim();
-            Location loc = new Location(name, desc);
+
+            boolean indoors = false;
+            // allow a marker token [building] in either the name or the description to mark indoor locations
+            if (name.toLowerCase().contains("[building]")) {
+                indoors = true;
+                name = name.replaceAll("(?i)\\[building\\]", "").trim();
+            }
+            if (desc.toLowerCase().contains("[building]")) {
+                indoors = true;
+                desc = desc.replaceAll("(?i)\\[building\\]", "").trim();
+            }
+            Location loc = new Location(name, desc, indoors);
             campus.addLocation(loc);
             if (firstLoc == null) firstLoc = loc;
         }

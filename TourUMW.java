@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.File;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * File format expected:
@@ -42,6 +43,8 @@ public class TourUMW {
 
         System.out.println(ts.getCurrentLocation().describeLocation(""));
 
+        Random rng = new Random();
+
         while (true) {
             System.out.print("\n> ");
             String input = s.nextLine();
@@ -52,6 +55,32 @@ public class TourUMW {
             }
             UserInputCommand cmd = parseInput(input);
             System.out.println(cmd.carryOut());
+
+            // Weather system with a 5-turn countdown: if a weather is pending, decrement and trigger when it reaches 0.
+            if (ts.hasPendingWeather()) {
+                int remaining = ts.decrementPendingWeather();
+                if (remaining > 0) {
+                    System.out.println("Warning: " + ts.getPendingWeather().getName() + " expected in " + remaining + " turns.");
+                } else {
+                    Weather w = ts.consumePendingWeather();
+                    System.out.println();
+                    System.out.println("*** Weather event: " + w.getName() + " ***");
+                    System.out.println(w.getEventMessage());
+                    Location here = ts.getCurrentLocation();
+                    if (here == null || !here.isIndoors()) {
+                        System.out.println("You were outside when the " + w.getName() + " struck. Game over.");
+                        break;
+                    } else {
+                        System.out.println("You're inside a building and are protected from the " + w.getName() + ".");
+                    }
+                }
+            } else {
+                // No pending weather: schedule a new random weather to occur in 3 turns
+                Weather w = WeatherFactory.randomWeather();
+                ts.setPendingWeather(w, 3);
+                System.out.println();
+                System.out.println("Weather warning: " + w.getName() + " expected in 3 turns.");
+            }
         }
     }
 

@@ -17,6 +17,8 @@ public class Location {
     private String name;
     private String description;
     private boolean haveVisited;
+    // true when this location is an indoor building (protects from weather)
+    private boolean indoors;
 
     private final ArrayList<Door> doors = new ArrayList<>();
     private final ArrayList<Item> items = new ArrayList<>();
@@ -29,8 +31,19 @@ public class Location {
      * @param desc description text
      */
     public Location(String name, String desc) {
+        this(name, desc, false);
+    }
+
+    /**
+     * Constructs a Location with indoor flag.
+     * @param name location name
+     * @param desc description text
+     * @param indoors true if this location is indoors/a building
+     */
+    public Location(String name, String desc, boolean indoors) {
         this.name = name;
         this.description = (desc == null) ? "" : desc;
+        this.indoors = indoors;
     }
 
     /**
@@ -166,4 +179,16 @@ public class Location {
         }
         return sb.toString();
     }
+
+    /**
+     * Returns true if this location is considered indoors (a building).
+     * @return indoors flag
+     */
+    public boolean isIndoors() { return indoors; }
+
+    /**
+     * Sets whether this location is indoors.
+     * @param v true if indoors
+     */
+    public void setIndoors(boolean v) { this.indoors = v; }
 }
