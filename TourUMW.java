@@ -118,6 +118,12 @@ public class TourUMW {
                 System.out.println();
                 System.out.println("Weather warning: " + w.getName() + " expected in 5 turns.");
             }
+
+            // Tick pending disappearing items (items picked up have a 5-turn window to be used)
+            java.util.List<Item> expired = ts.tickPendingDisappears();
+            for (Item rem : expired) {
+                System.out.println("The " + rem.getName() + " has disappeared from your backpack after not being used.");
+            }
         }
     }
 

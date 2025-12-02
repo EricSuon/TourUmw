@@ -22,10 +22,19 @@ public class TourStatus {
     // Pending weather event (scheduled but not yet active)
     private Weather pendingWeather;
     private int pendingWeatherTurns;
+    // Movement tracking (counts of steps taken in each direction)
+    private int northSteps = 0;
+    private int southSteps = 0;
+    private int eastSteps = 0;
+    private int westSteps = 0;
     // Teleport tracking
     private int turnsSinceTeleport = 0;
     private boolean teleportPending = false;
     private int teleportCountdown = 0;
+    // Pending disappearing items: item -> remaining turns
+    private final Map<Item, Integer> pendingDisappear = new HashMap<>();
+    // Items scheduled this turn should not be decremented until next turn
+    private final Set<Item> newlyScheduledDisappear = new HashSet<>();
 
     private TourStatus() { }
 
@@ -98,6 +107,8 @@ public class TourStatus {
             Item it = backpack.get(i);
             if (it.getName().equalsIgnoreCase(disappear.getName())) {
                 backpack.remove(i);
+                // cancel any pending disappearance when the item leaves the backpack
+                cancelPendingDisappear(it);
                 if (currentLocation != null) currentLocation.addItem(it);
                 return it;
             }
@@ -116,10 +127,86 @@ public class TourStatus {
         if (found != null) {
             currentLocation.removeItem(found);
             backpack.add(found);
+            // schedule disappearance after 5 turns (user has 5 turns to use it)
+            setPendingDisappear(found, 5);
         }
         return found;
     }
 
+    /**
+     * Schedule an item to disappear after a number of turns. If the item is already scheduled,
+     * its timer will be reset.
+     */
+    public void setPendingDisappear(Item item, int turns) {
+        if (item == null || turns < 1) return;
+        pendingDisappear.put(item, turns);
+        newlyScheduledDisappear.add(item);
+    }
+
+    /**
+     * Cancel a pending disappearance for the given item.
+     */
+    public void cancelPendingDisappear(Item item) {
+        if (item == null) return;
+        pendingDisappear.remove(item);
+        newlyScheduledDisappear.remove(item);
+    }
+
+    /**
+     * Decrement all pending disappearance timers (except those scheduled this turn).
+     * Removes expired items from the backpack and returns the list of removed items.
+     */
+    public java.util.List<Item> tickPendingDisappears() {
+        java.util.List<Item> expired = new java.util.ArrayList<>();
+        Iterator<Map.Entry<Item, Integer>> it = pendingDisappear.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Item, Integer> e = it.next();
+            Item item = e.getKey();
+            if (newlyScheduledDisappear.contains(item)) {
+                // skip decrement this turn; the item becomes active next turn
+                newlyScheduledDisappear.remove(item);
+                continue;
+            }
+            int rem = e.getValue() - 1;
+            if (rem <= 0) {
+                it.remove();
+                backpack.remove(item);
+                expired.add(item);
+            } else {
+                e.setValue(rem);
+            }
+        }
+        return expired;
+    }
+
+    /**
+     * Record a movement in the given direction ("n","s","e","w").
+     * The first character of the string is used case-insensitively.
+     * @param dir direction string
+     */
+    public void recordMove(String dir) {
+        if (dir == null || dir.isEmpty()) return;
+        char c = Character.toLowerCase(dir.charAt(0));
+        switch (c) {
+            case 'n': northSteps++; break;
+            case 's': southSteps++; break;
+            case 'e': eastSteps++; break;
+            case 'w': westSteps++; break;
+            default: break;
+        }
+    }
+
+    /**
+     * Returns a one-line summary of distances moved (counts per direction).
+     * @return formatted summary
+     */
+    public String getDistanceSummary() {
+        int total = northSteps + southSteps + eastSteps + westSteps;
+        int netNorth = northSteps - southSteps; // positive => net north
+        int netEast = eastSteps - westSteps;    // positive => net east
+        return "Moves: N=" + northSteps + " S=" + southSteps + " E=" + eastSteps + " W=" + westSteps
+                + " | Total=" + total;
+    }
     /**
      * Schedules a pending weather event to occur after a number of turns.
      * @param w weather event
@@ -236,6 +323,9 @@ public class TourStatus {
         if (tgt == null || tgt.isBlank()) {
             return "You can't use the " + item.getName() + " that way.";
         }
+
+        // Using the item consumes it as a valid use: cancel any pending disappearance
+        cancelPendingDisappear(item);
 
         // Transform the item
         Item def = campus.getItemDefinition(tgt);

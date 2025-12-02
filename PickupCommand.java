@@ -21,6 +21,6 @@ public class PickupCommand implements UserInputCommand {
             return "Please specify which item to pick up (e.g., \"pickup hat\").";
         Item got = TourStatus.getInstance().pickupItemFromLocation(itemName);
         if (got == null) return "There is no \"" + itemName + "\" here.";
-        return got.getMessage();
+        return got.getMessage() + " You have 5 turns to use this item before it disappears from your backpack.";
     }
 }

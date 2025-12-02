@@ -19,6 +19,9 @@ public class MovementCommand implements UserInputCommand {
         TourStatus ts = TourStatus.getInstance();
         Location next = ts.updateTourLocation(dir);
         if (next == null) return "You can't go that way.";
+        // Record the successful move for distance tracking
+        ts.recordMove(dir);
+
         StringBuilder sb = new StringBuilder(next.describeLocation(dir));
         java.util.List<Person> ppl = ts.getCampus().getPeopleAtLocation(next.getName());
         if (!ppl.isEmpty()) {
@@ -29,6 +32,8 @@ public class MovementCommand implements UserInputCommand {
                 sb.append(ppl.get(i).getName());
             }
         }
+        // Append distance summary after a movement
+        sb.append(System.lineSeparator()).append(ts.getDistanceSummary());
         return sb.toString();
     }
 }
