@@ -56,6 +56,27 @@ public class TourUMW {
             UserInputCommand cmd = parseInput(input);
             System.out.println(cmd.carryOut());
 
+            // Check for teleport scheduling after every 5 turns
+            if (ts.checkAndIncrementTeleportCounter()) {
+                System.out.println();
+                System.out.println("WARNING: A mysterious force is gathering... You will be teleported in 3 turns!");
+            }
+
+            // Handle pending teleport countdown
+            if (ts.hasPendingTeleport()) {
+                int remaining = ts.decrementTeleportCountdown();
+                if (remaining > 0) {
+                    System.out.println("Teleport warning: You will be transported in " + remaining + " turns.");
+                } else {
+                    Location teleportLoc = ts.consumeAndTeleport();
+                    if (teleportLoc != null) {
+                        System.out.println();
+                        System.out.println("*** You have been mysteriously teleported to " + teleportLoc.getName() + "! ***");
+                        System.out.println(teleportLoc.describeLocation(""));
+                    }
+                }
+            }
+
             // Weather system with a 5-turn countdown: if a weather is pending, decrement and trigger when it reaches 0.
             if (ts.hasPendingWeather()) {
                 int remaining = ts.decrementPendingWeather();
@@ -77,9 +98,9 @@ public class TourUMW {
             } else {
                 // No pending weather: schedule a new random weather to occur in 3 turns
                 Weather w = WeatherFactory.randomWeather();
-                ts.setPendingWeather(w, 3);
+                ts.setPendingWeather(w, 5);
                 System.out.println();
-                System.out.println("Weather warning: " + w.getName() + " expected in 3 turns.");
+                System.out.println("Weather warning: " + w.getName() + " expected in 5 turns.");
             }
         }
     }
@@ -120,7 +141,13 @@ public class TourUMW {
         if (lower.startsWith("disappear")) {
             String arg = extractArg(lower, "disappear");
             return new DisappearCommand(lower);
+        }
 
+        // Use
+        if (lower.startsWith("use") || lower.startsWith("u ")) {
+            String arg = extractArg(lower, "use");
+            if (arg == null && lower.startsWith("u ")) arg = lower.substring(2).trim();
+            return new UseCommand(arg == null ? "use" : "use " + arg);
         }
 
         return new InvalidCommand(input);
@@ -134,7 +161,7 @@ public class TourUMW {
      */
     public static Campus setUpCampus(Scanner s) throws Exception {
         System.out.println("Welcome to the UMW Virtual Tour!");
-        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, q to quit.)");
+        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, disapear for item to vanish, use <item> q to quit.)");
         System.out.print("Enter data file path (or press Enter for umw_campus_scavenger.txt): ");
         String path = s.nextLine().trim();
         File f = path.isEmpty() ? new File("umw_campus_scavenger.txt") : new File(path);

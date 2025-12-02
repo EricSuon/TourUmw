@@ -158,36 +158,65 @@ Simpson Library
 +++
 *****
 Items:
-coffee
++++
+coffee (Cup)
 For Five Coffee
 The latte of the day is a black raspberry mocha.
 +++
-Donut
+Donut (Crumbs)
 For Five Coffee
 Freshly made by local Freddy Donuts!
 +++
-The Design of Everyday Things book
+The Design of Everyday Things book (Torn Pages)
 Simpson Library
 The science of quality product design, why do we love some products, but are frustrated by others?
 +++
-UMW baseball hat
+UMW baseball hat (Hat Rag)
 Bookstore
 Show that school spirit!
 +++
-UMW hoodie
+UMW hoodie (Hoodie Rag)
 Bookstore
 Get cozy on Ball Circle and watch the leaves turn color!
 +++
-Little Brother book
+Little Brother book (Dog-eared Pages)
 Simpson Library
 Enjoy reading!
 +++
-Linux laptop
+Linux laptop (Broken Laptop)
 James Farmer Hall
 You can loan a linux laptop for your assignment this semester, and return it once you are done.
 +++
-Scone
+Scone (Crumbs)
 For Five Coffee
 Today we are serving chocolate chip scones!
++++
+Crumbs
+none
+A pile of crumbs left after eating a scone.
++++
+Cup
+none
+An empty cup left after finishing a coffee.
++++
+Torn Pages
+none
+Loose, torn pages from a book.
++++
+Hat Rag
+none
+A crumpled rag where a hat once was.
++++
+Hoodie Rag
+none
+A small piece of fabric left from a hoodie.
++++
+Dog-eared Pages
+none
+Pages folded and worn from heavy reading.
++++
+Broken Laptop
+none
+A laptop that no longer powers on.
 +++
 *****
