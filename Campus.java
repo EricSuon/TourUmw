@@ -156,6 +156,13 @@ public class Campus {
         return campus;
     }
 
+    public Item getItemFromList(String itemName) {
+        if (startingLocation != null) {
+            return startingLocation.getItemNamed(itemName);
+        }
+        return null;
+    }
+
 
     private static boolean isDirToken(String s) {
         if (s == null || s.isBlank()) return false;

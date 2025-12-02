@@ -117,6 +117,29 @@ public class TourStatus {
     }
 
     /**
+     * Finds item in backpack by name
+     * This method is for the DisappearCommand
+     * @param name item name
+     * @return the matching item, null if none
+     */
+    public Item getItemFromBackpack(String name) {
+        if (name == null) return null;
+        for (Item it : backpack) {
+            if (name.equalsIgnoreCase(it.getName())) return it;
+        }
+        return null;
+    }
+    /**
+     * Removes a specified item from the backpack
+     * @param item the Item object to remove
+     * @return the removed item, null if none
+     */
+    public Item removeFromBackpack(Item item) {
+        if (item == null) return null;
+        return backpack.remove(item) ? item : null;
+    }
+
+    /**
      * Schedules a pending weather event to occur after a number of turns.
      * @param w weather event
      * @param turns number of turns before the event occurs (must be >=1)

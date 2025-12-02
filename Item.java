@@ -7,7 +7,8 @@ public class Item {
     private String name;
     /** One-line message displayed when the item is picked up. */
     private String message;
-
+    /** Message shown when Disappear is carried out */
+    private String actionTwo;
     /** Zero-argument constructor. */
     public Item() { }
 
@@ -44,6 +45,18 @@ public class Item {
      * @param msg new message
      */
     public void setMessage(String msg) { this.message = msg; }
+
+    /**
+     * Action for Disappear command.
+     * @return actionTwo message
+     */
+    public String getActionTwo() {
+        return actionTwo;
+    }
+
+    public void setActionTwo(String actionTwoMsg) {
+        this.actionTwo = actionTwoMsg;
+    }
 
     /**
      * Returns the item name for display.

@@ -116,6 +116,13 @@ public class TourUMW {
             return new DropCommand(arg);
         }
 
+        // Disappear
+        if (lower.startsWith("disappear")) {
+            String arg = extractArg(lower, "disappear");
+            return new DisappearCommand(lower);
+
+        }
+
         return new InvalidCommand(input);
     }
 
