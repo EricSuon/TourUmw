@@ -220,3 +220,61 @@ none
 A laptop that no longer powers on.
 +++
 *****
+People:
+Dr Wu
+James Farmer Hall
+Cybersecurity Professor
+Dr Wu says she teaches cybersecurity and computer science in James Farmer Hall and loves helping students learn about security.
+Cybersecurity Flyer
+A flyer with information about UMW's cybersecurity and computer science programs.
++++
+Dr Sumner
+James Farmer Hall
+Math Professor
+Dr Sumner smiles and says they enjoy helping students understand calculus and proofs.
+Formula Sheet
+A small sheet of helpful math formulas for your classes.
++++
+Dean Rucker
+George Washington Hall
+Dean
+Dean Rucker says they work to make UMW a welcoming and supportive place for every student.
+UMW Pin
+A small UMW lapel pin that shows your school pride.
++++
+Dr Reef
+Simpson Library
+Chemistry Professor
+Dr Reef explains they teach chemistry at Jepson and love when students ask curious questions about reactions.
+Lab Safety Card
+A laminated card with key chemistry lab safety rules.
++++
+Maya
+Campus Walk East
+Student Ambassador
+Maya says she gives tours to prospective students and loves sharing why UMW feels like home.
+Campus Map
+A handy map of the UMW campus with key locations highlighted.
++++
+Casey
+For Five Coffee
+Barista
+Casey says they keep campus caffeinated and recommend trying the drink of the day.
+Drink Coupon
+A coupon for one free drink at For Five Coffee.
++++
+Dr Carter
+Simpson Library
+Librarian
+Dr Carter says they can help you find any book or article you need for your classes.
+Research Guide
+A brochure with tips for doing research at Simpson Library.
++++
+Alex
+Double Drive
+First-Year Student
+Alex says they just started at UMW and are still learning their way around campus.
+Welcome Brochure
+A small brochure with general information about student life at UMW.
++++
+*****

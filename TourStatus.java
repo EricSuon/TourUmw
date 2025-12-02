@@ -89,14 +89,14 @@ public class TourStatus {
 
     /**
      * Drops an item from the backpack by name (case-insensitive) into the current location.
-     * @param name item name
+     * @param disappear item name
      * @return the dropped item, or null if not owned
      */
-    public Item dropItemFromBackpack(String name) {
-        if (name == null) return null;
+    public Item dropItemFromBackpack(Item disappear) {
+        if (disappear == null) return null;
         for (int i = 0; i < backpack.size(); i++) {
             Item it = backpack.get(i);
-            if (it.getName().equalsIgnoreCase(name)) {
+            if (it.getName().equalsIgnoreCase(disappear.getName())) {
                 backpack.remove(i);
                 if (currentLocation != null) currentLocation.addItem(it);
                 return it;
@@ -118,62 +118,6 @@ public class TourStatus {
             backpack.add(found);
         }
         return found;
-    }
-
-    /**
-     * Finds item in backpack by name
-     * This method is for the DisappearCommand
-     * @param name item name
-     * @return the matching item, null if none
-     */
-    public Item getItemFromBackpack(String name) {
-        if (name == null) return null;
-        for (Item it : backpack) {
-            if (name.equalsIgnoreCase(it.getName())) return it;
-        }
-        return null;
-    }
-
-    /**
-     * Uses an item from the backpack, triggering transformation if applicable.
-     * @param name item name
-     * @return message describing what happened, or error message
-     */
-    public String useItemFromBackpack(String name) {
-        if (name == null) return "Please specify which item to use.";
-        Item item = getItemFromBackpack(name);
-        if (item == null) return "You don't have a \"" + name + "\" in your backpack.";
-
-        String tgt = item.getTransformTarget();
-        if (tgt == null || tgt.isBlank()) {
-            return "You can't use the " + item.getName() + " that way.";
-        }
-
-        // Transform the item
-        Item def = campus.getItemDefinition(tgt);
-        Item transformed;
-        if (def != null) {
-            transformed = new Item(def.getName(), def.getMessage());
-            transformed.setActionTwo(def.getActionTwo());
-            transformed.setTransformTarget(def.getTransformTarget());
-        } else {
-            transformed = new Item(tgt, "");
-        }
-
-        int idx = backpack.indexOf(item);
-        if (idx >= 0) {
-            backpack.set(idx, transformed);
-        }
-        return "You used the " + item.getName() + " and it transformed into " + transformed.getName() + "!";
-    }
-    /**
-     * Removes a specified item from the backpack
-     * @param item the Item object to remove
-     * @return the removed item, null if none
-     */
-    public Item removeFromBackpack(Item item) {
-        if (item == null) return null;
-        return backpack.remove(item) ? item : null;
     }
 
     /**
@@ -240,7 +184,7 @@ public class TourStatus {
         if (turnsSinceTeleport == 5) {
             turnsSinceTeleport = 0;
             teleportPending = true;
-            teleportCountdown = 3;  // 3 turn warning before actual teleport
+            teleportCountdown = 3;
             return true;
         }
         return false;
@@ -276,5 +220,50 @@ public class TourStatus {
         setCurrentLocation(newLoc);
         newLoc.setHaveVisited(true);
         return newLoc;
+    }
+
+    /**
+     * Uses an item from the backpack, triggering transformation if applicable.
+     * @param name item name
+     * @return message describing what happened, or error message
+     */
+    public String useItemFromBackpack(String name) {
+        if (name == null) return "Please specify which item to use.";
+        Item item = getItemFromBackpack(name);
+        if (item == null) return "You don't have a \"" + name + "\" in your backpack.";
+
+        String tgt = item.getTransformTarget();
+        if (tgt == null || tgt.isBlank()) {
+            return "You can't use the " + item.getName() + " that way.";
+        }
+
+        // Transform the item
+        Item def = campus.getItemDefinition(tgt);
+        Item transformed;
+        if (def != null) {
+            transformed = new Item(def.getName(), def.getMessage());
+            transformed.setTransformTarget(def.getTransformTarget());
+        } else {
+            transformed = new Item(tgt, "");
+        }
+
+        int idx = backpack.indexOf(item);
+        if (idx >= 0) {
+            backpack.set(idx, transformed);
+        }
+        return "You used the " + item.getName() + " and it transformed into " + transformed.getName() + "!";
+    }
+
+    /**
+     * Finds item in backpack by name
+     * @param name item name
+     * @return the matching item, null if none
+     */
+    public Item getItemFromBackpack(String name) {
+        if (name == null) return null;
+        for (Item it : backpack) {
+            if (name.equalsIgnoreCase(it.getName())) return it;
+        }
+        return null;
     }
 }

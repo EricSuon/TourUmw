@@ -19,6 +19,16 @@ public class MovementCommand implements UserInputCommand {
         TourStatus ts = TourStatus.getInstance();
         Location next = ts.updateTourLocation(dir);
         if (next == null) return "You can't go that way.";
-        return next.describeLocation(dir);
+        StringBuilder sb = new StringBuilder(next.describeLocation(dir));
+        java.util.List<Person> ppl = ts.getCampus().getPeopleAtLocation(next.getName());
+        if (!ppl.isEmpty()) {
+            sb.append(System.lineSeparator());
+            sb.append("People here: ");
+            for (int i = 0; i < ppl.size(); i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(ppl.get(i).getName());
+            }
+        }
+        return sb.toString();
     }
 }

@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.io.File;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * File format expected:
@@ -41,9 +40,17 @@ public class TourUMW {
         ts.setCurrentLocation(campus.getStartingLocation());
         ts.getCurrentLocation().setHaveVisited(true);
 
+        // Print starting location and any people present
         System.out.println(ts.getCurrentLocation().describeLocation(""));
-
-        Random rng = new Random();
+        java.util.List<Person> startPeople = ts.getCampus().getPeopleAtLocation(ts.getCurrentLocation().getName());
+        if (!startPeople.isEmpty()) {
+            System.out.print("People here: ");
+            for (int i = 0; i < startPeople.size(); i++) {
+                if (i > 0) System.out.print(", ");
+                System.out.print(startPeople.get(i).getName());
+            }
+            System.out.println();
+        }
 
         while (true) {
             System.out.print("\n> ");
@@ -73,6 +80,15 @@ public class TourUMW {
                         System.out.println();
                         System.out.println("*** You have been mysteriously teleported to " + teleportLoc.getName() + "! ***");
                         System.out.println(teleportLoc.describeLocation(""));
+                        java.util.List<Person> telePeople = ts.getCampus().getPeopleAtLocation(teleportLoc.getName());
+                        if (!telePeople.isEmpty()) {
+                            System.out.print("People here: ");
+                            for (int i = 0; i < telePeople.size(); i++) {
+                                if (i > 0) System.out.print(", ");
+                                System.out.print(telePeople.get(i).getName());
+                            }
+                            System.out.println();
+                        }
                     }
                 }
             }
@@ -139,7 +155,6 @@ public class TourUMW {
 
         // Disappear
         if (lower.startsWith("disappear")) {
-            String arg = extractArg(lower, "disappear");
             return new DisappearCommand(lower);
         }
 
@@ -148,6 +163,13 @@ public class TourUMW {
             String arg = extractArg(lower, "use");
             if (arg == null && lower.startsWith("u ")) arg = lower.substring(2).trim();
             return new UseCommand(arg == null ? "use" : "use " + arg);
+        }
+
+        // Meet
+        if (lower.startsWith("meet") || lower.startsWith("m ")) {
+            String arg = extractArg(lower, "meet");
+            if (arg == null && lower.startsWith("m ")) arg = lower.substring(2).trim();
+            return new MeetPersonCommand(arg == null ? "meet" : "meet " + arg);
         }
 
         return new InvalidCommand(input);
@@ -161,7 +183,7 @@ public class TourUMW {
      */
     public static Campus setUpCampus(Scanner s) throws Exception {
         System.out.println("Welcome to the UMW Virtual Tour!");
-        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, disapear for item to vanish, use <item> q to quit.)");
+        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, disapear for item to vanish, use <item>, meet to talk NPC q to quit.)");
         System.out.print("Enter data file path (or press Enter for umw_campus_scavenger.txt): ");
         String path = s.nextLine().trim();
         File f = path.isEmpty() ? new File("umw_campus_scavenger.txt") : new File(path);

@@ -17,6 +17,8 @@ public class Campus {
     private final Map<String, Location> locations = new LinkedHashMap<>();
     /** Case-insensitive key -> Item definition (may exist but not be placed in any location). */
     private final Map<String, Item> itemDefinitions = new LinkedHashMap<>();
+    /** List of persons on campus. */
+    private final List<Person> persons = new ArrayList<>();
     /** Display name (optional). */
     private final String name;
     /** Starting location. */
@@ -190,6 +192,23 @@ public class Campus {
             }
         }
 
+        // PEOPLE (optional)
+        if (sections.size() >= 5) {
+            List<String> peopleSection = new ArrayList<>(sections.get(4));
+            removeLabelLines(peopleSection, "People:");
+            List<List<String>> peopleBlocks = splitOn(peopleSection, "+++");
+            for (List<String> rawBlock : peopleBlocks) {
+                List<String> nb = nonBlank(rawBlock);
+                if (nb.size() < 3) continue;
+                   String personName = nb.get(0).trim();
+                   String personLocation = nb.get(1).trim();
+                String dialogue = nb.size() > 3 ? nb.get(3).trim() : "";
+
+                   Person person = new Person(personName, personLocation, dialogue);
+                campus.addPerson(person);
+            }
+        }
+
         return campus;
     }
 
@@ -210,6 +229,32 @@ public class Campus {
     public Item getItemDefinition(String name) {
         if (name == null) return null;
         return itemDefinitions.get(keyFor(name));
+    }
+
+    /** Adds a person to campus. */
+    public void addPerson(Person p) {
+        if (p != null) persons.add(p);
+    }
+
+    /** Finds a person by name at a specific location. */
+    public Person getPersonAtLocation(String personName, String locationName) {
+        if (personName == null || locationName == null) return null;
+        for (Person p : persons) {
+            if (p.getName().equalsIgnoreCase(personName) && p.getLocation().equalsIgnoreCase(locationName)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /** Returns a list of persons located at the given location name (case-insensitive). */
+    public java.util.List<Person> getPeopleAtLocation(String locationName) {
+        java.util.List<Person> out = new java.util.ArrayList<>();
+        if (locationName == null) return out;
+        for (Person p : persons) {
+            if (locationName.equalsIgnoreCase(p.getLocation())) out.add(p);
+        }
+        return out;
     }
 
 

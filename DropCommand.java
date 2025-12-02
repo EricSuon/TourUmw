@@ -19,8 +19,9 @@ public class DropCommand implements UserInputCommand {
     public String carryOut() {
         if (itemName == null || itemName.isBlank())
             return "Please specify which item to drop (e.g., \"drop hat\").";
-        Item dropped = TourStatus.getInstance().dropItemFromBackpack(itemName);
-        if (dropped == null) return "You don't have \"" + itemName + "\" in your backpack.";
+        Item itemToDrop = TourStatus.getInstance().getItemFromBackpack(itemName);
+        if (itemToDrop == null) return "You don't have \"" + itemName + "\" in your backpack.";
+        Item dropped = TourStatus.getInstance().dropItemFromBackpack(itemToDrop);
         return "The " + dropped.getName() + " has been dropped in " +
                 TourStatus.getInstance().getCurrentLocation().getName() + ".";
     }

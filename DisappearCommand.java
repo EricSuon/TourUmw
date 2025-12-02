@@ -46,12 +46,12 @@ public class DisappearCommand implements UserInputCommand {
 
         //permanently remove item from backpack
         if (goneMessage == null) {
-            tour.removeFromBackpack(disappear);
+            tour.dropItemFromBackpack(disappear);
             return goneItem + "disappears without a trace!";
         }
 
         String[] parts = goneMessage.split(":", 2);
-        tour.removeFromBackpack(disappear);
+        tour.dropItemFromBackpack(disappear);
 
         if (parts.length >= 2) {
             return parts [1].trim();

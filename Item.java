@@ -7,10 +7,11 @@ public class Item {
     private String name;
     /** One-line message displayed when the item is picked up. */
     private String message;
-    /** Message shown when Disappear is carried out */
-    private String actionTwo;
     /** Optional transform target name (when this item transforms into another). */
     private String transformTarget;
+    /** Message shown when Disappear is carried out */
+    private String actionTwo;
+
     /** Zero-argument constructor. */
     public Item() { }
 
@@ -49,21 +50,27 @@ public class Item {
     public void setMessage(String msg) { this.message = msg; }
 
     /**
-     * Action for Disappear command.
+     * Gets the action two message (for Disappear).
      * @return actionTwo message
      */
-    public String getActionTwo() {
-        return actionTwo;
-    }
+    public String getActionTwo() { return actionTwo; }
 
-    public void setActionTwo(String actionTwoMsg) {
-        this.actionTwo = actionTwoMsg;
-    }
+    /**
+     * Sets the action two message.
+     * @param actionTwoMsg new message
+     */
+    public void setActionTwo(String actionTwoMsg) { this.actionTwo = actionTwoMsg; }
 
-    /** Gets the transform target name (the item this one becomes when transformed). */
+    /**
+     * Gets the transform target name (the item this one becomes when used).
+     * @return transform target name or null
+     */
     public String getTransformTarget() { return transformTarget; }
 
-    /** Sets the transform target name. */
+    /**
+     * Sets the transform target name.
+     * @param t target item name
+     */
     public void setTransformTarget(String t) { this.transformTarget = t; }
 
     /**
