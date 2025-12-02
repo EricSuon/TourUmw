@@ -22,6 +22,10 @@ public class TourStatus {
     // Pending weather event (scheduled but not yet active)
     private Weather pendingWeather;
     private int pendingWeatherTurns;
+    // Teleport tracking
+    private int turnsSinceTeleport = 0;
+    private boolean teleportPending = false;
+    private int teleportCountdown = 0;
 
     private TourStatus() { }
 
@@ -129,6 +133,39 @@ public class TourStatus {
         }
         return null;
     }
+
+    /**
+     * Uses an item from the backpack, triggering transformation if applicable.
+     * @param name item name
+     * @return message describing what happened, or error message
+     */
+    public String useItemFromBackpack(String name) {
+        if (name == null) return "Please specify which item to use.";
+        Item item = getItemFromBackpack(name);
+        if (item == null) return "You don't have a \"" + name + "\" in your backpack.";
+
+        String tgt = item.getTransformTarget();
+        if (tgt == null || tgt.isBlank()) {
+            return "You can't use the " + item.getName() + " that way.";
+        }
+
+        // Transform the item
+        Item def = campus.getItemDefinition(tgt);
+        Item transformed;
+        if (def != null) {
+            transformed = new Item(def.getName(), def.getMessage());
+            transformed.setActionTwo(def.getActionTwo());
+            transformed.setTransformTarget(def.getTransformTarget());
+        } else {
+            transformed = new Item(tgt, "");
+        }
+
+        int idx = backpack.indexOf(item);
+        if (idx >= 0) {
+            backpack.set(idx, transformed);
+        }
+        return "You used the " + item.getName() + " and it transformed into " + transformed.getName() + "!";
+    }
     /**
      * Removes a specified item from the backpack
      * @param item the Item object to remove
@@ -192,5 +229,52 @@ public class TourStatus {
             sb.append(backpack.get(i).getName());
         }
         return sb.toString();
+    }
+
+    /**
+     * Increments the turn counter and returns true if 5 turns have passed (schedules teleport).
+     * @return true if teleport should be scheduled (every 5 turns)
+     */
+    public boolean checkAndIncrementTeleportCounter() {
+        turnsSinceTeleport++;
+        if (turnsSinceTeleport == 5) {
+            turnsSinceTeleport = 0;
+            teleportPending = true;
+            teleportCountdown = 3;  // 3 turn warning before actual teleport
+            return true;
+        }
+        return false;
+    }
+
+    /** Returns true if a teleport is pending. */
+    public boolean hasPendingTeleport() { return teleportPending; }
+
+    /** Decrements teleport countdown and returns remaining turns before teleport. */
+    public int decrementTeleportCountdown() {
+        if (!teleportPending) return -1;
+        teleportCountdown--;
+        return teleportCountdown;
+    }
+
+    /** Consumes the pending teleport and teleports to a random location. */
+    public Location consumeAndTeleport() {
+        if (!teleportPending) return null;
+        teleportPending = false;
+        teleportCountdown = 0;
+        return teleportToRandomLocation();
+    }
+
+    /**
+     * Teleports to a random location on campus.
+     * @return the new location, or null if no locations available
+     */
+    public Location teleportToRandomLocation() {
+        if (campus == null) return null;
+        java.util.List<Location> allLocs = new java.util.ArrayList<>(campus.getLocations().values());
+        if (allLocs.isEmpty()) return null;
+        Location newLoc = allLocs.get(new java.util.Random().nextInt(allLocs.size()));
+        setCurrentLocation(newLoc);
+        newLoc.setHaveVisited(true);
+        return newLoc;
     }
 }

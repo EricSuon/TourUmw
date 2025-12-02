@@ -9,6 +9,8 @@ public class Item {
     private String message;
     /** Message shown when Disappear is carried out */
     private String actionTwo;
+    /** Optional transform target name (when this item transforms into another). */
+    private String transformTarget;
     /** Zero-argument constructor. */
     public Item() { }
 
@@ -57,6 +59,12 @@ public class Item {
     public void setActionTwo(String actionTwoMsg) {
         this.actionTwo = actionTwoMsg;
     }
+
+    /** Gets the transform target name (the item this one becomes when transformed). */
+    public String getTransformTarget() { return transformTarget; }
+
+    /** Sets the transform target name. */
+    public void setTransformTarget(String t) { this.transformTarget = t; }
 
     /**
      * Returns the item name for display.

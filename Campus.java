@@ -15,6 +15,8 @@ import java.util.*;
 public class Campus {
     /** Case-insensitive key -> Location. */
     private final Map<String, Location> locations = new LinkedHashMap<>();
+    /** Case-insensitive key -> Item definition (may exist but not be placed in any location). */
+    private final Map<String, Item> itemDefinitions = new LinkedHashMap<>();
     /** Display name (optional). */
     private final String name;
     /** Starting location. */
@@ -36,8 +38,22 @@ public class Campus {
         locations.put(keyFor(loc.getName()), loc);
     }
 
+    /** Returns the locations map. */
+    public Map<String, Location> getLocations() { return locations; }
+
     /** Looks up a location by (trimmed, case-insensitive) name. */
-    public Location getLocation(String name) { return locations.get(keyFor(name)); }
+    public Location getLocation(String name) {
+        Location loc = locations.get(keyFor(name));
+        if (loc != null) return loc;
+        // If not found, try stripping any bracketed qualifiers such as "[building]"
+        if (name != null) {
+            String stripped = name.replaceAll("(?i)\\s*\\[.*?\\]\\s*", "").trim();
+            if (!stripped.isEmpty() && !stripped.equals(name.trim())) {
+                loc = locations.get(keyFor(stripped));
+            }
+        }
+        return loc;
+    }
 
     /** Adds a door; throws with a helpful message if endpoints are missing. */
     public void addDoor(char dir, String fromName, String toName) {
@@ -142,14 +158,35 @@ public class Campus {
             for (List<String> rawBlock : itemBlocks) {
                 List<String> nb = nonBlank(rawBlock);
                 if (nb.size() < 3) continue;
-                String itemName = nb.get(0).trim();
+                String itemNameRaw = nb.get(0).trim();
                 String locName  = nb.get(1).trim();
                 String message  = nb.get(2).trim();
-                Location where = campus.getLocation(locName);
-                if (where == null) {
-                    throw new IllegalArgumentException("Item location not found: \"" + locName + "\" for item \"" + itemName + "\"");
+
+                // Detect optional transform target in parentheses within the item name: "Cookie (Crumbs)"
+                String itemName = itemNameRaw;
+                String transformTarget = null;
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("^(.*?)\\s*\\(([^)]+)\\)\\s*$").matcher(itemNameRaw);
+                if (m.find()) {
+                    itemName = m.group(1).trim();
+                    transformTarget = m.group(2).trim();
                 }
-                where.addItem(new Item(itemName, message));
+
+                // Create definition and register it
+                Item def = new Item(itemName, message);
+                if (transformTarget != null && !transformTarget.isEmpty()) def.setTransformTarget(transformTarget);
+                campus.registerItemDefinition(def);
+
+                // If location is "none", do not place the item anywhere; otherwise place a copy at the location
+                if (!locName.equalsIgnoreCase("none")) {
+                    Location where = campus.getLocation(locName);
+                    if (where == null) {
+                        throw new IllegalArgumentException("Item location not found: \"" + locName + "\" for item \"" + itemName + "\"");
+                    }
+                    Item placed = new Item(def.getName(), def.getMessage());
+                    placed.setActionTwo(def.getActionTwo());
+                    placed.setTransformTarget(def.getTransformTarget());
+                    where.addItem(placed);
+                }
             }
         }
 
@@ -161,6 +198,18 @@ public class Campus {
             return startingLocation.getItemNamed(itemName);
         }
         return null;
+    }
+
+    /** Registers an item definition for later lookup. */
+    public void registerItemDefinition(Item it) {
+        if (it == null || it.getName() == null) return;
+        itemDefinitions.put(keyFor(it.getName()), it);
+    }
+
+    /** Looks up a registered item definition by name (case-insensitive). */
+    public Item getItemDefinition(String name) {
+        if (name == null) return null;
+        return itemDefinitions.get(keyFor(name));
     }
 
 
