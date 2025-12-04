@@ -79,7 +79,6 @@ public class Campus {
         from.addDoor(new Door(dir, from, to));
     }
 
-
     /**
      * Loads a Campus from a file with sections separated by "*****" and blocks by "+++".
      * Accepts:
@@ -130,7 +129,21 @@ public class Campus {
         // DOORS
         List<String> doorSection = new ArrayList<>(sections.get(2));
         removeLabelLines(doorSection, "Doors:");
-        List<List<String>> doorBlocks = splitOn(doorSection, "+++");
+        // Normalize delimiters and strip stray markers (e.g., "Master Key" used for locks in data)
+        List<String> normalizedDoorSection = new ArrayList<>();
+        for (String ln : doorSection) {
+            String t = ln.trim();
+            if (t.equalsIgnoreCase("Master Key")) {
+                // ignore lock marker in door parsing; locking handled elsewhere
+                continue;
+            }
+            if (t.equals("++") || t.equals("++")) {
+                normalizedDoorSection.add("+++");
+            } else {
+                normalizedDoorSection.add(ln);
+            }
+        }
+        List<List<String>> doorBlocks = splitOn(normalizedDoorSection, "+++");
         for (List<String> rawBlock : doorBlocks) {
             List<String> nb = nonBlank(rawBlock);
             if (nb.size() < 3) continue;

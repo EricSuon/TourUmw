@@ -135,6 +135,11 @@ public class TourUMW {
         if (input == null) return new InvalidCommand("");
         String lower = input.toLowerCase(Locale.ROOT).trim();
 
+        // Save
+        if (lower.equals("save")) {
+            return new SaveCommand();
+        }
+
         // Movement (single letter n/s/e/w)
         if (lower.length() == 1 && "nsew".contains(lower)) {
             return new MovementCommand(lower);
@@ -178,6 +183,11 @@ public class TourUMW {
             return new MeetPersonCommand(arg == null ? "meet" : "meet " + arg);
         }
 
+        // Load
+        if (lower.equals("load")) {
+            return new LoadCommand();
+        }
+
         return new InvalidCommand(input);
     }
 
@@ -189,7 +199,7 @@ public class TourUMW {
      */
     public static Campus setUpCampus(Scanner s) throws Exception {
         System.out.println("Welcome to the UMW Virtual Tour!");
-        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, disapear for item to vanish, use <item>, meet to talk NPC q to quit.)");
+        System.out.println("(Commands: n/s/e/w, pickup <item>, drop <item>, backpack, disapear for item to vanish, use <item>, meet to talk NPC, save, load, q to quit.)");
         System.out.print("Enter data file path (or press Enter for umw_campus_scavenger.txt): ");
         String path = s.nextLine().trim();
         File f = path.isEmpty() ? new File("umw_campus_scavenger.txt") : new File(path);

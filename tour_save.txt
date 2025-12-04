@@ -1,0 +1,6 @@
+UMW_SAVE_V1
+DATA_FILE: umw_campus_scavenger.txt
+CURRENT_LOCATION: Campus Walk East
+DISTANCE: TourStatus@6e0be858
+BACKPACK:
+END_BACKPACK

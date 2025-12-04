@@ -22,6 +22,7 @@ public class Location {
 
     private final ArrayList<Door> doors = new ArrayList<>();
     private final ArrayList<Item> items = new ArrayList<>();
+    private final ArrayList<Person> people = new ArrayList<>();
 
     public Location() { }
 
@@ -116,6 +117,7 @@ public class Location {
             sb.append(description.trim()).append(System.lineSeparator());
         }
         sb.append(getItemsInLocation()).append(System.lineSeparator());
+        sb.append(describePeople()).append(System.lineSeparator());
         sb.append(describeDoors());
         return sb.toString();
     }
@@ -179,6 +181,64 @@ public class Location {
         }
         return sb.toString();
     }
+    /**
+     * Adds a person to this location.
+     *
+     * @param p the person to add
+     */
+    public void addPerson(Person p) {
+        if (p != null) {
+            people.add(p);
+        }
+    }
+
+    /**
+     * Returns a read-only collection of people at this location.
+     *
+     * @return collection of people in this location
+     */
+    public java.util.Collection<Person> getPeople() {
+        return java.util.Collections.unmodifiableCollection(people);
+    }
+
+    /**
+     * Finds a person in this location by name (case-insensitive).
+     *
+     * @param name the name to search for
+     * @return matching Person, or null if not found
+     */
+    public Person getPerson(String name) {
+        if (name == null) {
+            return null;
+        }
+        for (Person p : people) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a description of all people in this location.
+     *
+     * @return text listing people here, or saying none
+     */
+    public String describePeople() {
+        if (people.isEmpty()) {
+            return "People here: none.";
+        }
+        StringBuilder sb = new StringBuilder("People here: ");
+        for (int i = 0; i < people.size(); i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            Person p = people.get(i);
+            sb.append(p.getName());
+        }
+        return sb.toString();
+    }
+
 
     /**
      * Returns true if this location is considered indoors (a building).

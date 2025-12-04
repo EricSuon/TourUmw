@@ -19,6 +19,7 @@ public class TourStatus {
     private Campus campus;
     private Location currentLocation;
     private final ArrayList<Item> backpack = new ArrayList<>();
+
     // Pending weather event (scheduled but not yet active)
     private Weather pendingWeather;
     private int pendingWeatherTurns;
@@ -202,10 +203,8 @@ public class TourStatus {
      */
     public String getDistanceSummary() {
         int total = northSteps + southSteps + eastSteps + westSteps;
-        int netNorth = northSteps - southSteps; // positive => net north
-        int netEast = eastSteps - westSteps;    // positive => net east
         return "Moves: N=" + northSteps + " S=" + southSteps + " E=" + eastSteps + " W=" + westSteps
-                + " | Total=" + total;
+            + " | Total=" + total;
     }
     /**
      * Schedules a pending weather event to occur after a number of turns.
@@ -355,5 +354,21 @@ public class TourStatus {
             if (name.equalsIgnoreCase(it.getName())) return it;
         }
         return null;
+    }
+
+    public void setDistance(int distance) {
+        // Resets all movement counters to zero, then adds 'distance' to northSteps
+        northSteps = distance;
+        southSteps = 0;
+        eastSteps = 0;
+        westSteps = 0;
+    }
+
+    public void clearBackpack() {
+        backpack.clear();
+    }
+
+    public List<Item> getBackpack() {
+        return backpack;
     }
 }

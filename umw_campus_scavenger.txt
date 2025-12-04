@@ -79,11 +79,13 @@ Double Drive
 Double Drive
 w
 George Washington Hall
-+++
+Master Key
+++ 
 George Washington Hall
 e
 Double Drive
-+++
+Master Key
+++
 Bell Tower
 w
 Campus Walk East
@@ -135,11 +137,13 @@ Campus Walk West
 Monroe Fountain
 n
 Monroe Hall
-+++
+Master Key
+++
 Monroe Hall
 s
 Monroe Fountain
-+++
+Master Key
+++
 Monroe Fountain
 s
 Simpson Library
@@ -151,11 +155,13 @@ Monroe Fountain
 Simpson Library
 w
 For Five Coffee
-+++
+Master Key
+++
 For Five Coffee
 e
 Simpson Library
-+++
+Master Key
+++
 *****
 Items:
 +++
@@ -170,22 +176,27 @@ Freshly made by local Freddy Donuts!
 The Design of Everyday Things book (Torn Pages)
 Simpson Library
 The science of quality product design, why do we love some products, but are frustrated by others?
-+++
+++
 UMW baseball hat (Hat Rag)
 Bookstore
 Show that school spirit!
-+++
+++
+Master Key
+Bookstore
+A small brass key labeled Master Key. It can unlock all locked doors on campus.
+++
 UMW hoodie (Hoodie Rag)
 Bookstore
 Get cozy on Ball Circle and watch the leaves turn color!
-+++
+++
 Little Brother book (Dog-eared Pages)
 Simpson Library
 Enjoy reading!
-+++
+++
 Linux laptop (Broken Laptop)
 James Farmer Hall
 You can loan a linux laptop for your assignment this semester, and return it once you are done.
+++
 +++
 Scone (Crumbs)
 For Five Coffee
